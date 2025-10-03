@@ -1,6 +1,6 @@
 <?php
-const TOKEN_ANDERCODE = 'https://botacry.ibsimportadora.pe/webhook.php';
-const WEBHOOK_URL = '9f4b2d7a1c8e5f60b3a2d9e4c7f1b6a8d2e3f4c5b6a7c8d9e0f1a2b3c4d5e6f';
+const TOKEN_ANDERCODE = '9f4b2d7a1c8e5f60b3a2d9e4c7f1b6a8d2e3f4c5b6a7c8d9e0f1a2b3c4d5e6f';
+const WEBHOOK_URL = 'https://botacry.ibsimportadora.pe/webhook.php';
 
 function verificarToken($req, $res)
 {
