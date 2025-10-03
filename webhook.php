@@ -20,16 +20,31 @@ function verificarToken($req, $res)
 function recibirMensaje($req)
 {
     try {
-        // Log completo para debugging
-        $timestamp = date('Y-m-d H:i:s');
-        $archivo = fopen("log.txt", "a");
+        // Verificar si hay mensajes reales en el webhook
+        if (isset($req['entry'][0]['changes'][0]['value']['messages'])) {
+            $entry = $req['entry'][0];
+            $changes = $entry['changes'][0];
+            $value = $changes['value'];
+            $objetomensaje = $value['messages'];
+            $mensaje = $objetomensaje[0];
 
-        if ($archivo) {
-            // Escribir todo el contenido del webhook
-            $logEntry = "[$timestamp] WEBHOOK COMPLETO: " . json_encode($req, JSON_PRETTY_PRINT) . "\n";
-            fwrite($archivo, $logEntry);
-            fwrite($archivo, "----------------------------------------\n");
-            fclose($archivo);
+            // Solo procesar si tiene texto
+            if (isset($mensaje['text']['body'])) {
+                $comentario = $mensaje['text']['body'];
+                $numero = $mensaje['from'];
+                $timestamp = date('Y-m-d H:i:s');
+
+                $archivo = fopen("log.txt", "a");
+                if ($archivo) {
+                    $logData = [
+                        'fecha' => $timestamp,
+                        'numero' => $numero,
+                        'mensaje' => $comentario
+                    ];
+                    fwrite($archivo, json_encode($logData) . "\n");
+                    fclose($archivo);
+                }
+            }
         }
 
         // Respuesta correcta en PHP
