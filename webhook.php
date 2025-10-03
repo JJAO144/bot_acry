@@ -20,6 +20,10 @@ function verificarToken($req, $res)
 function recibirMensaje($req, $res)
 {
     try {
+        $archivo = fopen("log.txt", "a");
+        $texto = json_encode($req);
+        fwrite($archivo, $texto . "\n");
+        fclose($archivo);
         $res->send("EVENT_RECEIVED");
     } catch (\Throwable $th) {
         $res->send("EVENT_RECEIVED");
