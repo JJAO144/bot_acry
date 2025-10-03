@@ -17,30 +17,34 @@ function verificarToken($req, $res)
         $res->status(400)->send();
     }
 }
-function recibirMensaje($req, $res)
+function recibirMensaje($req)
 {
     try {
-        $entry = $req['entry'][0];
-        $changes = $entry['changes'][0];
-        $value = $changes['value'];
-        $objetomensaje = $value['messages'];
-        $mensaje = $objetomensaje[0];
-        $comentario = $mensaje['text']['body'];
-        $numero = $mensaje['from'];
+        // Log completo para debugging
+        $timestamp = date('Y-m-d H:i:s');
         $archivo = fopen("log.txt", "a");
-        $texto = json_encode($comentario);
-        fwrite($archivo, $texto . "\n");
-        fclose($archivo);
-        $res->send("EVENT_RECEIVED");
+
+        if ($archivo) {
+            // Escribir todo el contenido del webhook
+            $logEntry = "[$timestamp] WEBHOOK COMPLETO: " . json_encode($req, JSON_PRETTY_PRINT) . "\n";
+            fwrite($archivo, $logEntry);
+            fwrite($archivo, "----------------------------------------\n");
+            fclose($archivo);
+        }
+
+        // Respuesta correcta en PHP
+        http_response_code(200);
+        echo "EVENT_RECEIVED";
     } catch (\Throwable $th) {
-        $res->send("EVENT_RECEIVED");
+        http_response_code(200);
+        echo "EVENT_RECEIVED";
     }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = file_get_contents('php://input');
     $data = json_decode($input, true);
-    recibirMensaje($data, http_response_code());
+    recibirMensaje($data);
 } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (isset($_GET['hub_mode']) && isset($_GET['hub_verify_token']) && isset($_GET['hub_challenge']) && $_GET['hub_mode'] === 'subscribe' && $_GET['hub_verify_token'] === TOKEN_ANDERCODE) {
         echo $_GET['hub_challenge'];
