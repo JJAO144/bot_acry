@@ -17,23 +17,33 @@ function verificarToken($req, $res)
         $res->status(400)->send();
     }
 }
-function recibirMensaje($req, $res)
+function recibirMensaje($data)
 {
     try {
+        // Crear log con timestamp
+        $timestamp = date('Y-m-d H:i:s');
+        $logEntry = "[$timestamp] " . json_encode($data) . "\n";
+
+        // Escribir al archivo log
         $archivo = fopen("log.txt", "a");
-        $texto = json_encode($req);
-        fwrite($archivo, $texto);
-        fclose($archivo);
-        $res->send("EVENT_RECEIVED");
+        if ($archivo) {
+            fwrite($archivo, $logEntry);
+            fclose($archivo);
+        }
+
+        // Responder correctamente en PHP
+        http_response_code(200);
+        echo "EVENT_RECEIVED";
     } catch (\Throwable $th) {
-        $res->send("EVENT_RECEIVED");
+        http_response_code(200);
+        echo "EVENT_RECEIVED";
     }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = file_get_contents('php://input');
     $data = json_decode($input, true);
-    recibirMensaje($data, http_response_code());
+    recibirMensaje($data);
 } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (isset($_GET['hub_mode']) && isset($_GET['hub_verify_token']) && isset($_GET['hub_challenge']) && $_GET['hub_mode'] === 'subscribe' && $_GET['hub_verify_token'] === TOKEN_ANDERCODE) {
         echo $_GET['hub_challenge'];
