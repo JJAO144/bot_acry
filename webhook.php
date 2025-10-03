@@ -35,7 +35,7 @@ function recibirMensaje($req)
                 $numero = $mensaje['from'];
                 $messageId = $mensaje['id']; // ID único del mensaje
                 $timestamp = date('d/m/Y H:i:s'); // Formato peruano: día/mes/año hora:minuto:segundo
-
+                EnviarMensaje($numero, $comentario);
                 // Verificar si ya procesamos este mensaje
                 $logContent = file_exists("log.txt") ? file_get_contents("log.txt") : "";
 
@@ -79,4 +79,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         http_response_code(403);
     }
+}
+
+function EnviarMensaje($numero, $comentario)
+{
+    $comentario = strtoupper($comentario);
+    // if (strpos($comentario, 'Hola') !== false || strpos($comentario, 'HOLA') !== false) {
+    $mensaje = "Hola, gracias por comunicarte con IBS Importadora. ¿En qué puedo ayudarte hoy?";
+    // }
+    $data = json_encode([
+        'messaging_product' => 'whatsapp',
+        'recipient_type' => 'individual',
+        'to' => $numero,
+        'type' => 'text',
+        'text' => ['body' => $mensaje]
+    ]);
+    $options = [
+        'http' => [
+            'header'  => "Content-Type: application/json\r\n" . "Authorization: Bearer EAAVpCLgPlrcBPhC3qgxW3cBvYZCxqEK1XZCsrD4lDhZB3uW0IICUIbx31t9rdw6FFQETaaCmqezFytwGkYLCYme7JF5oPolcqKkfZCLIH6FeQL5O4P09KiE2BQVvTVZBd9CsOhZAmyAZBttZCJUyw8s0Ep06ZAj6curWnFnoI525RWxXnnag0pL9hVZAlZCHn8hlZAQxUqDuUdrikSnlvWoBMZBU04CtTpdmyVLGWzCdYizvcMNh5JQZDZD\r\n",
+            'method'  => 'POST',
+            'content' => $data,
+            'ignore_errors' => true
+        ]
+    ];
+
+    $context = stream_context_create($options);
+    $response = file_get_contents('https://graph.facebook.com/v22.0/858223394033664/messages', false, $context);
+    return $response;
 }
