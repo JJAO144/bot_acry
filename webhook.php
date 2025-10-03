@@ -28,7 +28,7 @@ function recibirMensaje($req, $res)
         $comentario = $mensaje['text']['body'];
         $numero = $mensaje['from'];
         $archivo = fopen("log.txt", "a");
-        $texto = json_encode($comentario);
+        $texto = json_encode($numero);
         fwrite($archivo, $texto . "\n");
         fclose($archivo);
         $res->send("EVENT_RECEIVED");
