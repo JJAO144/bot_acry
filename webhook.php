@@ -36,10 +36,30 @@ function recibirMensaje($req)
                 $messageId = $mensaje['id']; // ID único del mensaje
                 $timestamp = date('d/m/Y H:i:s'); // Formato peruano: día/mes/año hora:minuto:segundo
 
-                // VALIDACIÓN PARA EVITAR BUCLE INFINITO
-                // Verificar que el mensaje NO sea del bot mismo
+                // DEBUG: Verificar qué está llegando
                 $phoneNumberId = $value['metadata']['phone_number_id'] ?? '';
-                $isFromBot = ($phoneNumberId === '858223394033664'); // Tu ID de WhatsApp Business
+                $debugInfo = [
+                    'phone_number_id' => $phoneNumberId,
+                    'from' => $numero,
+                    'metadata' => $value['metadata'] ?? 'no metadata'
+                ];
+                
+                // Log de debug
+                $archivo = fopen("debug.txt", "a");
+                if ($archivo) {
+                    fwrite($archivo, "[DEBUG] " . json_encode($debugInfo) . "\n");
+                    fclose($archivo);
+                }
+                
+                // VALIDACIÓN PARA EVITAR BUCLE INFINITO
+                $isFromBot = ($phoneNumberId === '858223394033664');
+                
+                // Log de la decisión
+                $archivo = fopen("debug.txt", "a");
+                if ($archivo) {
+                    fwrite($archivo, "[DECISION] isFromBot: " . ($isFromBot ? 'SI' : 'NO') . "\n");
+                    fclose($archivo);
+                }
 
                 // Solo responder si NO es del bot
                 if (!$isFromBot) {
