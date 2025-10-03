@@ -35,7 +35,12 @@ function recibirMensaje($req)
                 $numero = $mensaje['from'];
                 $messageId = $mensaje['id']; // ID único del mensaje
                 $timestamp = date('d/m/Y H:i:s'); // Formato peruano: día/mes/año hora:minuto:segundo
-                EnviarMensaje($numero, $comentario);
+
+                // VERIFICAR QUE NO SEA UN MENSAJE DEL BOT
+                if (!isset($value['metadata']['phone_number_id'])) {
+                    EnviarMensaje($numero, $comentario);
+                }
+
                 // Verificar si ya procesamos este mensaje
                 $logContent = file_exists("log.txt") ? file_get_contents("log.txt") : "";
 
@@ -85,7 +90,7 @@ function EnviarMensaje($numero, $comentario)
 {
     $comentario = strtoupper($comentario);
     // if (strpos($comentario, 'Hola') !== false || strpos($comentario, 'HOLA') !== false) {
-    $mensaje = "Hola, gracias por comunicarte con IBS Importadora. ¿En qué puedo ayudarte hoy?";
+    $mensaje = "Hola, gracias por comunicarte con Acrylove. ¿En qué puedo ayudarte hoy?";
     // }
     $data = json_encode([
         'messaging_product' => 'whatsapp',
