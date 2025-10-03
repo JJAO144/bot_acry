@@ -37,9 +37,9 @@ function recibirMensaje($req)
                 $timestamp = date('d/m/Y H:i:s'); // Formato peruano: día/mes/año hora:minuto:segundo
 
                 // VERIFICAR QUE NO SEA UN MENSAJE DEL BOT
-                if (!isset($value['metadata']['phone_number_id'])) {
-                    EnviarMensaje($numero, $comentario);
-                }
+                // if (!isset($value['metadata']['phone_number_id'])) {
+                EnviarMensaje($numero, $comentario);
+                // }
 
                 // Verificar si ya procesamos este mensaje
                 $logContent = file_exists("log.txt") ? file_get_contents("log.txt") : "";
