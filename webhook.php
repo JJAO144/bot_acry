@@ -36,10 +36,15 @@ function recibirMensaje($req)
                 $messageId = $mensaje['id']; // ID único del mensaje
                 $timestamp = date('d/m/Y H:i:s'); // Formato peruano: día/mes/año hora:minuto:segundo
 
-                // VERIFICAR QUE NO SEA UN MENSAJE DEL BOT
-                // if (!isset($value['metadata']['phone_number_id'])) {
-                EnviarMensaje($numero, $comentario);
-                // }
+                // VALIDACIÓN PARA EVITAR BUCLE INFINITO
+                // Verificar que el mensaje NO sea del bot mismo
+                $phoneNumberId = $value['metadata']['phone_number_id'] ?? '';
+                $isFromBot = ($phoneNumberId === '858223394033664'); // Tu ID de WhatsApp Business
+
+                // Solo responder si NO es del bot
+                if (!$isFromBot) {
+                    EnviarMensaje($numero, $comentario);
+                }
 
                 // Verificar si ya procesamos este mensaje
                 $logContent = file_exists("log.txt") ? file_get_contents("log.txt") : "";
