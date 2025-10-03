@@ -21,14 +21,14 @@ function recibirMensaje($req, $res)
 {
     try {
         $entry = $req['entry'][0];
-        $changes = $entry['changes'][0];
-        $value = $changes['value'];
-        $objetomensaje = $value['messages'];
-        $mensaje = $objetomensaje[0];
-        $comentario = $mensaje['text']['body'];
+        // $changes = $entry['changes'][0];
+        // $value = $changes['value'];
+        // $objetomensaje = $value['messages'];
+        // $mensaje = $objetomensaje[0];
+        // $comentario = $mensaje['text']['body'];
         // $numero = $mensaje['from'];
         $archivo = fopen("log.txt", "a");
-        $texto = json_encode($comentario);
+        $texto = json_encode($entry);
         fwrite($archivo, $texto . "\n");
         fclose($archivo);
         $res->send("EVENT_RECEIVED");
